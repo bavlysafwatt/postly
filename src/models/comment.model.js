@@ -20,7 +20,7 @@ const commentSchema = new mongoose.Schema({
 commentSchema.pre(/^find/, function () {
     this.populate({
         path: 'user',
-        select: 'name username photo -email'
+        select: 'name username photo'
     });
 });
 

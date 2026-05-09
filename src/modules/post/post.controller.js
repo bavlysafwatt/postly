@@ -1,4 +1,6 @@
 const Post = require('./../../models/post.model');
+const Like = require('./../../models/like.model');
+const Comment = require('./../../models/comment.model');
 const catchAsync = require('../../utils/catchAsync.utils');
 const AppError = require('../../utils/AppError.utils');
 const APIFeatures = require('../../utils/ApiFeatures.utils');
@@ -111,6 +113,75 @@ exports.getPostsByUser = catchAsync(async (req, res, next) => {
         results: posts.length,
         data: {
             posts
+        }
+    });
+});
+
+exports.likePost = catchAsync(async (req, res, next) => {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+        return next(new AppError('No post found with that ID', 404));
+    }
+
+    const like = await Like.create({ user: req.user._id, post: req.params.id });
+
+    res.status(201).json({
+        status: 'success',
+        data: {
+            like
+        }
+    });
+});
+
+exports.unlikePost = catchAsync(async (req, res, next) => {
+    const like = await Like.findOneAndDelete({ user: req.user._id, post: req.params.id });
+
+    if (!like) {
+        return next(new AppError('No like found for this post by the user', 404));
+    }
+
+    res.status(204).json({
+        status: 'success',
+        data: null
+    });
+});
+
+exports.addComment = catchAsync(async (req, res, next) => {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+        return next(new AppError('No post found with that ID', 404));
+    }
+
+    const comment = (await Comment.create({ user: req.user._id, post: req.params.id, content: req.body.content }));
+
+    await comment.populate('user', 'name username photo');
+
+    res.status(201).json({
+        status: 'success',
+        data: {
+            comment
+        }
+    });
+});
+
+exports.getComments = catchAsync(async (req, res, next) => {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+        return next(new AppError('No post found with that ID', 404));
+    }
+
+    const comments = new APIFeatures(Comment.find({ post: req.params.id }), req.query)
+        .sort()
+        .limitFields()
+        .paginate();
+
+    const results = await comments.query;
+
+    res.status(200).json({
+        status: 'success',
+        results: results.length,
+        data: {
+            comments: results
         }
     });
 });
