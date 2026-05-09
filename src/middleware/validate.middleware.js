@@ -14,10 +14,6 @@ const validate = (schema) => {
 
         else if (req.files) {
             filter = {
-                photo: req.files.photo
-                    ? req.files.photo[0].path
-                    : undefined,
-
                 photos: req.files.photos
                     ? req.files.photos.map(file => file.path)
                     : [],
