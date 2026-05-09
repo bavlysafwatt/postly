@@ -36,6 +36,14 @@ const userSchema = new mongoose.Schema({
     passwordChangedAt: Date,
     passwordResetOtp: String,
     passwordResetExpires: Date,
+    followers: {
+        type: Number,
+        default: 0
+    },
+    following: {
+        type: Number,
+        default: 0
+    }
 });
 
 userSchema.pre('save', async function () {
