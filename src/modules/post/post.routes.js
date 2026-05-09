@@ -21,7 +21,7 @@ router.route('/:id')
 
 // Likes
 router.post('/:id/like', validate(likePostSchema), postController.likePost);
-router.post('/:id/unlike', validate(unlikePostSchema), postController.unlikePost);
+router.delete('/:id/unlike', validate(unlikePostSchema), postController.unlikePost);
 
 
 //Comments
