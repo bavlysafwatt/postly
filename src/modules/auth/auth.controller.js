@@ -92,28 +92,3 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.user = currentUser;
     next();
 });
-
-exports.getMe = catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.user._id).select('-__v');
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            user
-        }
-    });
-});
-
-exports.updateMe = catchAsync(async (req, res, next) => {
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
-        new: true,
-        runValidators: true
-    }).select('-__v');
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            user: updatedUser
-        }
-    });
-});

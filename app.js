@@ -7,6 +7,7 @@ const qs = require('qs');
 const { globalError } = require('./src/middleware/error.middleware');
 const AppError = require('./src/utils/AppError.utils');
 const authRoutes = require('./src/modules/auth/auth.routes');
+const userRoutes = require('./src/modules/user/user.routes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.all('/{*any}', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

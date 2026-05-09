@@ -11,7 +11,4 @@ router.post('/register', uploadSingleFile('photo', 'users'), validate(registerSc
 router.post('/login', validate(loginSchema), authController.login);
 router.post('/update-password', authController.protect, validate(updatePasswordSchema), authController.updatePassword);
 
-router.get('/me', authController.protect, authController.getMe);
-router.patch('/update-me', authController.protect, validate(updateMeSchema), authController.updateMe);
-
 module.exports = router;
