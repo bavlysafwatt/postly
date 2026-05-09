@@ -1,6 +1,6 @@
 const AppError = require('../utils/AppError.utils');
 
-export const validate = (schema) => {
+const validate = (schema) => {
     return (req, res, next) => {
         let filter = {};
 
@@ -44,3 +44,5 @@ export const validate = (schema) => {
         next(new AppError(errorMessages.join(', '), 400));
     };
 };
+
+module.exports = validate;

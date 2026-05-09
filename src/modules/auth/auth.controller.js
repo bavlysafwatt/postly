@@ -27,8 +27,8 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.register = catchAsync(async (req, res, next) => {
-    const { name, email, password, confirmPassword } = req.body;
-    const newUser = await User.create({ name, email, password, passwordConfirm: confirmPassword });
+    req.body.photo = req.file ? req.file.path : undefined;
+    const newUser = await User.create(req.body);
 
     await new Email(newUser).sendWelcome();
 

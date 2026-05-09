@@ -6,7 +6,7 @@ const qs = require('qs');
 
 const { globalError } = require('./src/middleware/error.middleware');
 const AppError = require('./src/utils/AppError.utils');
-const { uploadSingleFile } = require('./src/middleware/upload.middleware');
+const authRoutes = require('./src/modules/auth/auth.routes');
 
 const app = express();
 
@@ -30,14 +30,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.post('/api/v1/uploadPhoto', uploadSingleFile('photo', 'posts'), (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        data: {
-            file: req.file.path
-        }
-    });
-});
+app.use('/api/v1/auth', authRoutes);
 
 app.all('/{*any}', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
