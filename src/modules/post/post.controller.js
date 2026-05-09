@@ -4,6 +4,7 @@ const Comment = require('./../../models/comment.model');
 const catchAsync = require('../../utils/catchAsync.utils');
 const AppError = require('../../utils/AppError.utils');
 const APIFeatures = require('../../utils/ApiFeatures.utils');
+const attachPostMeta = require('../../utils/attachPostMeta.utils');
 
 exports.createPost = catchAsync(async (req, res, next) => {
     req.body.author = req.user._id;
@@ -32,17 +33,22 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
         status: 'success',
         results: posts.length,
         data: {
-            posts
+            posts: await attachPostMeta(posts, req.user._id)
         }
     });
 });
 
 exports.getPost = catchAsync(async (req, res, next) => {
     const post = await Post.findById(req.params.id);
+
+    if (!post) {
+        return next(new AppError('No post found with that ID', 404));
+    }
+
     res.status(200).json({
         status: 'success',
         data: {
-            post
+            post: await attachPostMeta(post, req.user._id)
         }
     });
 });
@@ -94,7 +100,7 @@ exports.getMyPosts = catchAsync(async (req, res, next) => {
         status: 'success',
         results: posts.length,
         data: {
-            posts
+            posts: await attachPostMeta(posts, req.user._id)
         }
     });
 });
@@ -112,7 +118,7 @@ exports.getPostsByUser = catchAsync(async (req, res, next) => {
         status: 'success',
         results: posts.length,
         data: {
-            posts
+            posts: await attachPostMeta(posts, req.user._id)
         }
     });
 });

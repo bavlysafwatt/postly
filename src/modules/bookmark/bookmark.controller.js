@@ -21,7 +21,10 @@ exports.createBookmark = catchAsync(async (req, res, next) => {
 });
 
 exports.getMyBookmarks = catchAsync(async (req, res, next) => {
-    const bookmarks = await Bookmark.find({ user: req.user._id });
+    const bookmarks = await Bookmark.find({ user: req.user._id }).populate({
+        path: 'post',
+        select: 'title content author createdAt photos'
+    });
 
     res.status(200).json({
         status: 'success',
