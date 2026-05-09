@@ -26,7 +26,7 @@ const postSchema = new mongoose.Schema({
 postSchema.pre(/^find/, function () {
     this.populate({
         path: 'author',
-        select: 'name username photo -email'
+        select: 'name username photo'
     });
 });
 

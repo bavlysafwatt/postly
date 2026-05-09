@@ -76,3 +76,39 @@ exports.deletePost = catchAsync(async (req, res, next) => {
         data: null
     });
 });
+
+exports.getMyPosts = catchAsync(async (req, res, next) => {
+    const features = new APIFeatures(Post.find({ author: req.user._id }), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+
+    const posts = await features.query;
+
+    res.status(200).json({
+        status: 'success',
+        results: posts.length,
+        data: {
+            posts
+        }
+    });
+});
+
+exports.getPostsByUser = catchAsync(async (req, res, next) => {
+    const features = new APIFeatures(Post.find({ author: req.params.id }), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+
+    const posts = await features.query;
+
+    res.status(200).json({
+        status: 'success',
+        results: posts.length,
+        data: {
+            posts
+        }
+    });
+});

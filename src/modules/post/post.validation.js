@@ -7,6 +7,7 @@ exports.createPostSchema = Joi.object({
 });
 
 exports.updatePostSchema = Joi.object({
+    id: Joi.string().hex().length(24).required(),
     title: Joi.string().min(3).max(100),
     content: Joi.string().min(10),
     photos: Joi.array().items(Joi.string().uri()),
