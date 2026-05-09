@@ -21,6 +21,14 @@ const postSchema = new mongoose.Schema({
     },
     updatedAt: Date,
     photos: [String],
+    likeCount: {
+        type: Number,
+        default: 0
+    },
+    commentCount: {
+        type: Number,
+        default: 0
+    }
 });
 
 postSchema.pre(/^find/, function () {

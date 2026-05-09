@@ -125,6 +125,10 @@ exports.likePost = catchAsync(async (req, res, next) => {
 
     const like = await Like.create({ user: req.user._id, post: req.params.id });
 
+    // Increase like count in Post document
+    post.likeCount = (post.likeCount || 0) + 1;
+    await post.save();
+
     res.status(201).json({
         status: 'success',
         data: {
@@ -134,11 +138,19 @@ exports.likePost = catchAsync(async (req, res, next) => {
 });
 
 exports.unlikePost = catchAsync(async (req, res, next) => {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+        return next(new AppError('No post found with that ID', 404));
+    }
     const like = await Like.findOneAndDelete({ user: req.user._id, post: req.params.id });
 
     if (!like) {
         return next(new AppError('No like found for this post by the user', 404));
     }
+
+    // Decrease like count in Post document
+    post.likeCount = Math.max(0, post.likeCount - 1);
+    await post.save();
 
     res.status(204).json({
         status: 'success',
@@ -155,6 +167,10 @@ exports.addComment = catchAsync(async (req, res, next) => {
     const comment = (await Comment.create({ user: req.user._id, post: req.params.id, content: req.body.content }));
 
     await comment.populate('user', 'name username photo');
+
+    // Increase comment count in Post document
+    post.commentCount = (post.commentCount || 0) + 1;
+    await post.save();
 
     res.status(201).json({
         status: 'success',
