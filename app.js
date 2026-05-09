@@ -9,6 +9,7 @@ const AppError = require('./src/utils/AppError.utils');
 const authRoutes = require('./src/modules/auth/auth.routes');
 const userRoutes = require('./src/modules/user/user.routes');
 const postRoutes = require('./src/modules/post/post.routes');
+const bookmarkRoutes = require('./src/modules/bookmark/bookmark.routes');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/posts', postRoutes);
+app.use('/api/v1/bookmarks', bookmarkRoutes);
 
 app.all('/{*any}', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

@@ -46,7 +46,9 @@ exports.getPost = catchAsync(async (req, res, next) => {
 });
 
 exports.updatePost = catchAsync(async (req, res, next) => {
-    req.body.photos = req.files && req.files.photos ? req.files.photos.map(file => file.path) : [];
+    if (req.files && req.files.photos) {
+        req.body.photos = req.files.photos.map(file => file.path);
+    }
     const post = await Post.findByIdAndUpdate({ _id: req.params.id, author: req.user._id }, req.body, {
         new: true,
         runValidators: true

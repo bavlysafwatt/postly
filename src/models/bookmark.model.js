@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { path } = require('../../app');
 
 const bookmarkSchema = new mongoose.Schema({
     post: {
@@ -9,7 +10,8 @@ const bookmarkSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: [true, 'Please provide a user who bookmarked the post!']
+        required: [true, 'Please provide a user who bookmarked the post!'],
+        select: false
     },
     createdAt: {
         type: Date,
@@ -18,6 +20,13 @@ const bookmarkSchema = new mongoose.Schema({
 });
 
 bookmarkSchema.index({ post: 1, user: 1 }, { unique: true });
+
+bookmarkSchema.pre(/^find/, function () {
+    this.populate({
+        path: 'post',
+        select: 'title content author createdAt photos'
+    })
+});
 
 const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
 
