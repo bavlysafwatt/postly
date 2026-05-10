@@ -2,6 +2,7 @@ const User = require('../../models/user.model');
 const Follow = require('../../models/follow.model');
 const catchAsync = require('../../utils/catchAsync.utils');
 const AppError = require('../../utils/AppError.utils');
+const notificationService = require('../notification/notification.service');
 
 exports.getMe = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.user._id).select('-__v');
@@ -74,6 +75,13 @@ exports.followUser = catchAsync(async (req, res, next) => {
 
     req.user.following += 1;
     await req.user.save();
+
+    // Create notification for the followed user
+    await notificationService.createNotification({
+        recipient: req.params.id,
+        sender: req.user._id,
+        type: 'follow'
+    });
 
     res.status(201).json({
         status: 'success',

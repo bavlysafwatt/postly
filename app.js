@@ -10,6 +10,7 @@ const authRoutes = require('./src/modules/auth/auth.routes');
 const userRoutes = require('./src/modules/user/user.routes');
 const postRoutes = require('./src/modules/post/post.routes');
 const bookmarkRoutes = require('./src/modules/bookmark/bookmark.routes');
+const notificationRoutes = require('./src/modules/notification/notification.routes');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/posts', postRoutes);
 app.use('/api/v1/bookmarks', bookmarkRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
 
 app.all('/{*any}', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

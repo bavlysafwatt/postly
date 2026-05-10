@@ -5,6 +5,7 @@ const catchAsync = require('../../utils/catchAsync.utils');
 const AppError = require('../../utils/AppError.utils');
 const APIFeatures = require('../../utils/ApiFeatures.utils');
 const attachPostMeta = require('../../utils/attachPostMeta.utils');
+const notificationService = require('../notification/notification.service');
 
 exports.createPost = catchAsync(async (req, res, next) => {
     req.body.author = req.user._id;
@@ -135,6 +136,14 @@ exports.likePost = catchAsync(async (req, res, next) => {
     post.likeCount = (post.likeCount || 0) + 1;
     await post.save();
 
+    // Create notification for post author
+    await notificationService.createNotification({
+        recipient: post.author,
+        sender: req.user._id,
+        type: 'like',
+        post: post._id
+    });
+
     res.status(201).json({
         status: 'success',
         data: {
@@ -177,6 +186,14 @@ exports.addComment = catchAsync(async (req, res, next) => {
     // Increase comment count in Post document
     post.commentCount = (post.commentCount || 0) + 1;
     await post.save();
+
+    // Create notification for post author
+    await notificationService.createNotification({
+        recipient: post.author,
+        sender: req.user._id,
+        type: 'comment',
+        post: post._id,
+    });
 
     res.status(201).json({
         status: 'success',
