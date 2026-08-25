@@ -157,3 +157,20 @@ exports.getFollowingByUser = catchAsync(async (req, res, next) => {
         }
     });
 });
+
+exports.searchUsers = catchAsync(async (req, res, next) => {
+    const { query } = req.query;
+    const users = await User.find({
+        $or: [
+            { name: { $regex: query, $options: 'i' } },
+            { username: { $regex: query, $options: 'i' } }
+        ]
+    }).select('name username photo').limit(5);
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            users
+        }
+    });
+});

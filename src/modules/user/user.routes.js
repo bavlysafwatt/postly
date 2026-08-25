@@ -11,6 +11,8 @@ const router = express.Router();
 
 router.use(authController.protect);
 
+router.get('/search', userController.searchUsers);
+
 router.patch('/update-me', uploadSingleFile('photo', 'users'), validate(updateMeSchema), userController.updateMe);
 
 router.get('/me', userController.getMe);
