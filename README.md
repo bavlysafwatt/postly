@@ -25,8 +25,7 @@ Postly is a social media backend application built with Node.js, Express, and Mo
 - Joi validation
 
 ## API Documentation
-The API documentation is available at the following link:  
-[View Postman API Documentation](https://documenter.getpostman.com/view/37706685/2sBXqNmdeH)
+The API documentation is available at the following link: [View Postman API Documentation](https://documenter.getpostman.com/view/37706685/2sBXqNmdeH)
 
 It includes all available endpoints such as authentication, posts, comments, likes, bookmarks, follows, and notifications, along with request and response examples.
 
