@@ -67,4 +67,51 @@ module.exports = class Email {
 
         await this.send(subject, html);
     }
+
+    async sendResetPassword(otp) {
+        const subject = 'Reset Your Postly Password 🔐';
+
+        const html = `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #4CAF50;">Password Reset Request 🔐</h2>
+
+                <p>Hi ${this.firstName},</p>
+
+                <p>
+                    We received a request to reset your Postly password.
+                    Use the verification code below to continue:
+                </p>
+
+                <div style="
+                    background-color: #f5f5f5;
+                    padding: 15px 25px;
+                    text-align: center;
+                    margin: 20px 0;
+                    border-radius: 8px;
+                    font-size: 32px;
+                    font-weight: bold;
+                    letter-spacing: 8px;
+                    color: #4CAF50;
+                ">
+                    ${otp}
+                </div>
+
+                <p>
+                    This code will expire shortly. If you didn't request a
+                    password reset, you can safely ignore this email.
+                </p>
+
+                <p>
+                    For your security, never share this code with anyone.
+                </p>
+
+                <p>
+                    Best regards,<br/>
+                    — The Postly Team
+                </p>
+            </div>
+        `;
+
+        await this.send(subject, html);
+    }
 };

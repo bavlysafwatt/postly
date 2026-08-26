@@ -65,6 +65,48 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     createSendToken(user, 200, res);
 });
 
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+    // 1) Get user based on POSTed email
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+        return next(new AppError('There is no user with that email address.', 404));
+    }
+
+    // 2) Generate the random OTP
+    const otp = user.createPasswordResetOtp();
+    await user.save({ validateBeforeSave: false });
+
+    // 3) Send the OTP to the user's email
+    await new Email(user).sendResetPassword(otp);
+
+    res.status(200).json({
+        status: 'success',
+        message: 'OTP sent to email!'
+    });
+});
+
+exports.resetPassword = catchAsync(async (req, res, next) => {
+    // 1) Get user based on the OTP
+    const user = await User.findOne({
+        passwordResetOtp: req.body.otp,
+        passwordResetExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        return next(new AppError('OTP is invalid or has expired', 400));
+    }
+
+    // 2) If OTP is valid, set the new password
+    user.password = req.body.newPassword;
+    user.confirmPassword = req.body.passwordConfirm;
+    user.passwordResetOtp = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    // 3) Log the user in, send JWT
+    createSendToken(user, 200, res);
+});
+
 exports.protect = catchAsync(async (req, res, next) => {
     // 1) Getting token and check if it's there
     let token;

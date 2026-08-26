@@ -23,3 +23,15 @@ exports.updatePasswordSchema = Joi.object({
         'any.only': 'Confirm new password must match new password',
     }),
 });
+
+exports.forgotPasswordSchema = Joi.object({
+    email: Joi.string().email().required(),
+});
+
+exports.resetPasswordSchema = Joi.object({
+    otp: Joi.string().length(6).required(),
+    newPassword: Joi.string().min(6).required(),
+    passwordConfirm: Joi.string().valid(Joi.ref('newPassword')).required().messages({
+        'any.only': 'Confirm new password must match new password',
+    }),
+});
