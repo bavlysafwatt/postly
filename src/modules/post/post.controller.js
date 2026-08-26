@@ -23,17 +23,22 @@ exports.createPost = catchAsync(async (req, res, next) => {
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Post.find(), req.query)
-        .filter()
         .sort()
         .limitFields()
         .paginate();
 
     const posts = await features.query;
+    const totalResults = await Post.countDocuments();
+    const totalPages = Math.ceil(totalResults / features.limit);
 
     res.status(200).json({
         status: 'success',
-        results: posts.length,
         data: {
+            page: features.page,
+            totalPages,
+            totalResults,
+            hasNextPage: features.page < totalPages,
+            hasPreviousPage: features.page > 1,
             posts: await attachPostMeta(posts, req.user._id)
         }
     });
@@ -90,17 +95,23 @@ exports.deletePost = catchAsync(async (req, res, next) => {
 
 exports.getMyPosts = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Post.find({ author: req.user._id }), req.query)
-        .filter()
         .sort()
         .limitFields()
         .paginate();
 
     const posts = await features.query;
+    // Get total results and total pages for pagination
+    const totalResults = await Post.countDocuments({ author: req.user._id });
+    const totalPages = Math.ceil(totalResults / features.limit);
 
     res.status(200).json({
         status: 'success',
-        results: posts.length,
         data: {
+            page: features.page,
+            totalPages,
+            totalResults,
+            hasNextPage: features.page < totalPages,
+            hasPreviousPage: features.page > 1,
             posts: await attachPostMeta(posts, req.user._id)
         }
     });
@@ -108,17 +119,22 @@ exports.getMyPosts = catchAsync(async (req, res, next) => {
 
 exports.getPostsByUser = catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Post.find({ author: req.params.id }), req.query)
-        .filter()
         .sort()
         .limitFields()
         .paginate();
 
     const posts = await features.query;
+    const totalResults = await Post.countDocuments({ author: req.params.id });
+    const totalPages = Math.ceil(totalResults / features.limit);
 
     res.status(200).json({
         status: 'success',
-        results: posts.length,
         data: {
+            page: features.page,
+            totalPages,
+            totalResults,
+            hasNextPage: features.page < totalPages,
+            hasPreviousPage: features.page > 1,
             posts: await attachPostMeta(posts, req.user._id)
         }
     });
@@ -209,18 +225,24 @@ exports.getComments = catchAsync(async (req, res, next) => {
         return next(new AppError('No post found with that ID', 404));
     }
 
-    const comments = new APIFeatures(Comment.find({ post: req.params.id }), req.query)
+    const features = new APIFeatures(Comment.find({ post: req.params.id }), req.query)
         .sort()
         .limitFields()
         .paginate();
 
-    const results = await comments.query;
+    const results = await features.query;
+    const totalResults = await Comment.countDocuments();
+    const totalPages = Math.ceil(totalResults / features.limit);
 
     res.status(200).json({
         status: 'success',
-        results: results.length,
         data: {
-            comments: results
+            page: features.page,
+            totalPages,
+            totalResults,
+            hasNextPage: features.page < totalPages,
+            hasPreviousPage: features.page > 1,
+            comments: results,
         }
     });
 });

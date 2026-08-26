@@ -5,17 +5,22 @@ const ApiFeatures = require('../../utils/ApiFeatures.utils');
 
 exports.getNotifications = catchAsync(async (req, res, next) => {
     const features = new ApiFeatures(Notification.find({ recipient: req.user._id }).populate('sender', 'username name photo'), req.query)
-        .filter()
         .sort()
         .limitFields()
         .paginate()
 
     const notifications = await features.query;
+    const totalResults = await Notification.countDocuments({ recipient: req.user._id });
+    const totalPages = Math.ceil(totalResults / features.limit);
 
     res.status(200).json({
         status: 'success',
-        length: notifications.length,
         data: {
+            page: features.page,
+            totalPages,
+            totalResults,
+            hasNextPage: features.page < totalPages,
+            hasPreviousPage: features.page > 1,
             notifications
         }
     });
