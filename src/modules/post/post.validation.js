@@ -1,14 +1,12 @@
 const Joi = require('joi');
 
 exports.createPostSchema = Joi.object({
-    title: Joi.string().min(3).max(100).required(),
     content: Joi.string().min(10).required(),
     photos: Joi.array().items(Joi.string().uri()),
 });
 
 exports.updatePostSchema = Joi.object({
     id: Joi.string().hex().length(24).required(),
-    title: Joi.string().min(3).max(100),
     content: Joi.string().min(10),
     photos: Joi.array().items(Joi.string().uri()),
 });

@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: [true, 'Please provide a title for the post!'],
-        trim: true
-    },
     content: {
         type: String,
         required: [true, 'Please provide content for the post!']
