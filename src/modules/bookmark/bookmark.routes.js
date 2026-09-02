@@ -11,8 +11,7 @@ router.use(authController.protect);
 
 router.route('/')
     .get(bookmarkController.getMyBookmarks)
-    .post(validate(createBookmarkSchema), bookmarkController.createBookmark);
-
-router.delete('/:id', validate(deleteBookmarkSchema), bookmarkController.deleteBookmark);
+    .post(validate(createBookmarkSchema), bookmarkController.createBookmark)
+    .delete(validate(deleteBookmarkSchema), bookmarkController.deleteBookmark);
 
 module.exports = router;

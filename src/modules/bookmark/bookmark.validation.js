@@ -5,6 +5,6 @@ exports.createBookmarkSchema = Joi.object({
 });
 
 exports.deleteBookmarkSchema = Joi.object({
-    id: Joi.string().hex().length(24).required(),
+    post: Joi.string().hex().length(24).required(),
 });
 

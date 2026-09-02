@@ -36,7 +36,7 @@ exports.getMyBookmarks = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteBookmark = catchAsync(async (req, res, next) => {
-    const bookmark = await Bookmark.findOneAndDelete({ _id: req.params.id, user: req.user._id });
+    const bookmark = await Bookmark.findOneAndDelete({ post: req.body.post, user: req.user._id });
 
     if (!bookmark) {
         return next(new AppError('No bookmark found with that ID or you are not the owner', 404));
