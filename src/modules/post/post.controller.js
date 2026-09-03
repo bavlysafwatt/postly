@@ -29,7 +29,7 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
         .paginate();
 
     const posts = await features.query;
-    const totalResults = await Post.countDocuments();
+    const totalResults = await Post.countDocuments({ author: { $ne: req.user._id } });
     const totalPages = Math.ceil(totalResults / features.limit);
 
     res.status(200).json({
