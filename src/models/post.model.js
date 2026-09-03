@@ -33,6 +33,19 @@ postSchema.pre(/^find/, function () {
     });
 });
 
+postSchema.pre('findOneAndDelete', async function () {
+    const postId = this.getQuery()._id;
+    await mongoose.model('Comment').deleteMany({
+        post: postId
+    });
+    await mongoose.model('Bookmark').deleteMany({
+        post: postId
+    });
+    await mongoose.model('Like').deleteMany({
+        post: postId
+    });
+});
+
 const Post = mongoose.model('Post', postSchema);
 
 module.exports = Post;
