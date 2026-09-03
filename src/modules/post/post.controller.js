@@ -23,7 +23,7 @@ exports.createPost = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
-    const features = new APIFeatures(Post.find(), req.query)
+    const features = new APIFeatures(Post.find({ author: { $ne: req.user._id } }), req.query)
         .sort()
         .limitFields()
         .paginate();
