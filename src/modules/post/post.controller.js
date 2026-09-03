@@ -11,7 +11,8 @@ exports.createPost = catchAsync(async (req, res, next) => {
     req.body.author = req.user._id;
     req.body.photos = req.files && req.files.photos ? req.files.photos.map(file => file.path) : [];
 
-    const newPost = await Post.create(req.body);
+    var newPost = await Post.create(req.body);
+    newPost = await newPost.populate('author', 'name username photo');
 
     res.status(201).json({
         status: 'success',
@@ -63,7 +64,7 @@ exports.updatePost = catchAsync(async (req, res, next) => {
     if (req.files && req.files.photos) {
         req.body.photos = req.files.photos.map(file => file.path);
     }
-    const post = await Post.findByIdAndUpdate({ _id: req.params.id, author: req.user._id }, req.body, {
+    var post = await Post.findByIdAndUpdate({ _id: req.params.id, author: req.user._id }, req.body, {
         new: true,
         runValidators: true
     });
@@ -71,6 +72,8 @@ exports.updatePost = catchAsync(async (req, res, next) => {
     if (!post) {
         return next(new AppError('No post found with that ID or you are not the author', 404));
     }
+
+    post = await post.populate('author', 'name username photo');
 
     res.status(200).json({
         status: 'success',
